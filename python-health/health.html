@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Python Service Health</title>
+    <style>
+        :root { --ink: #203028; --muted: #708077; --green: #3f7249; }
+        * { box-sizing: border-box; }
+        body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: radial-gradient(circle at 12% 10%, #dbeed7, transparent 28rem), #f3f6f0; }
+        main { width: min(100%, 580px); padding: clamp(28px, 7vw, 50px); background: rgba(255, 255, 255, .9); border: 1px solid #dce6d8; border-radius: 28px; box-shadow: 0 24px 70px rgba(33, 61, 39, .14); }
+        .eyebrow { display: inline-flex; align-items: center; gap: 7px; color: var(--green); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }.eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #4caf50; box-shadow: 0 0 0 4px #e4f2e2; }
+        h1 { margin: 20px 0 8px; font-size: clamp(2rem, 7vw, 3.2rem); letter-spacing: -.05em; } p { margin: 0; color: var(--muted); line-height: 1.6; }
+        .status { display: flex; gap: 14px; align-items: center; margin: 30px 0 16px; padding: 20px; background: #fbfcf9; border: 1px solid #dce6d8; border-radius: 18px; }.dot { width: 13px; height: 13px; flex: none; border-radius: 50%; background: #9aa69e; box-shadow: 0 0 0 6px #edf1eb; }.dot.healthy { background: #4caf50; box-shadow: 0 0 0 6px #e4f2e2; }.dot.error { background: #da5353; box-shadow: 0 0 0 6px #fae7e5; }.state { font-weight: 800; }.detail { margin-top: 3px; font-size: .86rem; }
+        .meta { padding: 14px; color: var(--muted); background: #f7f9f5; border-radius: 13px; font: .84rem ui-monospace, SFMono-Regular, monospace; } button { width: 100%; margin-top: 22px; padding: 13px; cursor: pointer; color: #fff; background: linear-gradient(135deg, #6faa67, var(--green)); border: 0; border-radius: 12px; font: inherit; font-weight: 750; box-shadow: 0 9px 18px rgba(63, 114, 73, .2); } button:disabled { cursor: wait; opacity: .7; }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="eyebrow">Python service</div>
+        <h1>Service health</h1>
+        <p>Live status from the Python Flask health-check service.</p>
+        <section class="status" aria-live="polite">
+            <span class="dot" id="dot"></span>
+            <div><div class="state" id="state">Checking service…</div><p class="detail" id="detail">Sending a request to /health.</p></div>
+        </section>
+        <div class="meta" id="checked">Last checked: —</div>
+        <button id="refresh" type="button">Check again</button>
+    </main>
+    <script>
+        const button = document.querySelector("#refresh");
+        const dot = document.querySelector("#dot");
+        const state = document.querySelector("#state");
+        const detail = document.querySelector("#detail");
+        const checked = document.querySelector("#checked");
+        async function checkHealth() {
+            button.disabled = true; button.textContent = "Checking…"; dot.className = "dot";
+            try {
+                const response = await fetch("/health", { cache: "no-store" });
+                const result = await response.json();
+                dot.className = `dot ${response.ok ? "healthy" : "error"}`;
+                state.textContent = response.ok ? "Service is healthy" : "Service needs attention";
+                detail.textContent = response.ok ? `${result.service} responded successfully.` : "The health check returned an error.";
+            } catch (error) {
+                dot.className = "dot error"; state.textContent = "Service is unavailable"; detail.textContent = error.message;
+            } finally {
+                checked.textContent = `Last checked: ${new Date().toLocaleTimeString()}`; button.disabled = false; button.textContent = "Check again";
+            }
+        }
+        button.addEventListener("click", checkHealth); checkHealth();
+    </script>
+</body>
+</html>

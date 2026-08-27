@@ -1,0 +1,16 @@
+{
+  "name": "node-project",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple Node.js application with a ping endpoint",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "pm2": "^7.0.3"
+  }
+}
