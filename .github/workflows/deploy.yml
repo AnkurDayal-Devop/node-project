@@ -179,4 +179,3 @@ jobs:
         if: always()
         run: |
           rm -f application.zip current-version.txt
-```
