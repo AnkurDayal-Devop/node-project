@@ -132,7 +132,7 @@ jobs:
 
           aws ssm wait command-executed \
             --command-id "$SSM_COMMAND_ID" \
-            --instance-id "$EC2_INSTANCE_ID" || true
+            --instance-id "$EC2_INSTANCE_ID"
 
       # -----------------------------------------
       # Check deployment status
