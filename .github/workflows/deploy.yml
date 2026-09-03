@@ -125,23 +125,6 @@ jobs:
           echo "SSM_COMMAND_ID=$SSM_COMMAND_ID" >> "$GITHUB_ENV"
 
       # -----------------------------------------
-      # Wait for deployment
-      # -----------------------------------------
-      - name: Wait for deployment
-        run: |
-          set +e
-
-          aws ssm wait command-executed \
-            --command-id "$SSM_COMMAND_ID" \
-            --instance-id "$EC2_INSTANCE_ID"
-
-          WAIT_STATUS=$?
-
-          echo "WAIT_STATUS=$WAIT_STATUS" >> "$GITHUB_ENV"
-
-          exit 0
-
-      # -----------------------------------------
       # Get deployment result
       # -----------------------------------------
       - name: Get deployment result
