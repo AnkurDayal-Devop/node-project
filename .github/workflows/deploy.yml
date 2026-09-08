@@ -79,7 +79,6 @@ jobs:
             -x ".git/*" \
             -x ".gitignore/*" \
             -x ".github/*" \
-            -x "python-health/*" \
             -x "node_modules/*"
 
           test -s application.zip
